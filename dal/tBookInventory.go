@@ -40,5 +40,4 @@ func (dal DAL) UpdateBookInventory(id int, changes map[string]interface{}) (out 
 	}
 
 	return out, nil
-
 }

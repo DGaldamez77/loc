@@ -68,3 +68,13 @@ func (dal DAL) InsertBookCheckout(in dto.BookCheckout) (out *dto.BookCheckout, e
 
 	return out, nil
 }
+
+func (dal DAL) UpdateBookCheckout(id int, changes map[string]interface{}) (out *dto.BookCheckout, err error) {
+	out = new(dto.BookCheckout)
+	err = dal.updateTable("loc.book_checkout", map[string]interface{}{"book_checkout_id": id}, changes, out)
+	if err != nil {
+		return nil, err
+	}
+
+	return out, nil
+}

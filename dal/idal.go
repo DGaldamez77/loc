@@ -20,6 +20,7 @@ type IDAL interface {
 
 	GetBookCheckouts([]QueryParams) ([]dto.BookCheckout, error)
 	InsertBookCheckout(dto.BookCheckout) (*dto.BookCheckout, error)
+	UpdateBookCheckout(int, map[string]interface{}) (*dto.BookCheckout, error)
 
 	GetBookInventory([]QueryParams) (*dto.BookInventory, error)
 	UpdateBookInventory(int, map[string]interface{}) (*dto.BookInventory, error)

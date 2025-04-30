@@ -30,7 +30,7 @@ func postBookCheckout(w http.ResponseWriter, r *http.Request) {
 	bookInventory, err := db.GetBookInventory(q)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
-			http.Error(w, err.Error(), http.StatusNotFound)
+			http.Error(w, "book not found", http.StatusNotFound)
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -103,6 +103,7 @@ func postBookCheckout(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
+		db.RollbackTransaction(tx)
 		return
 	}
 
@@ -113,12 +114,14 @@ func postBookCheckout(w http.ResponseWriter, r *http.Request) {
 	}
 	if _, err = db.UpdateBookInventory(bookInventory.BookID, changes); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+
 		db.RollbackTransaction(tx)
 		return
 	}
 
 	if err = db.Commit(tx); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+
 		db.RollbackTransaction(tx)
 		return
 	}

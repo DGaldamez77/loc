@@ -16,7 +16,7 @@ func RegisterEndpoints() chi.Router {
 	registerEndpoing(http.MethodGet, "/books", getBooks)
 	registerEndpoing(http.MethodGet, "/book/{bookID}", getBook)
 	registerEndpoing(http.MethodPost, "/book/checkout", postBookCheckout)
-	registerEndpoing(http.MethodPost, "/books/checkin", postBookCheckin)
+	registerEndpoing(http.MethodPost, "/book/checkin", postBookCheckin)
 
 	return r
 }
