@@ -27,6 +27,7 @@ And of course, extend the service to provide structured logging data to a servic
 * All indexes are BTree type.  As the service grows, we need to consider the possibility to change them to Hash indexes.
 * Use of local cache or a sevice like MemCache or Redis to store query responses with a sliding cleanup
 * And more time and patience to think of all the things I did not :)
+* Instead of sql scripts, change it to use a tool like DBMigrate for the promotion / demoting of DB features
 
 ## Endpoints
 
