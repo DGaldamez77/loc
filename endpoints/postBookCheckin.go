@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/dgaldamez77/oloc/dal"
-	"github.com/dgaldamez77/oloc/log"
+	"github.com/dgaldamez77/loc/dal"
+	"github.com/dgaldamez77/loc/log"
 )
 
 func postBookCheckin(w http.ResponseWriter, r *http.Request) {

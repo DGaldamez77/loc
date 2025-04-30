@@ -2,10 +2,11 @@ package dto
 
 import "time"
 
-type Genre struct {
-	ID        int        `json:"genre_id"`
-	Genre     string     `json:"genre"`
-	Active    bool       `json:"active"`
+type BookCheckout struct {
+	ID        int        `json:"book_checkout_id"`
+	BookID    int        `json:"book_id"`
+	UserID    int        `json:"user_id"`
+	Returned  *time.Time `json:"returned"`
 	CreatedBy string     `json:"created_by"`
 	UpdatedBy string     `json:"updated_by,omitempty"`
 	Created   time.Time  `json:"created"`

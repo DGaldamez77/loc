@@ -307,3 +307,11 @@ CREATE TRIGGER book_checkout_u
     ON loc.book_checkout
     FOR EACH ROW
 EXECUTE PROCEDURE loc.table_changed();
+
+GRANT ALL ON SEQUENCE loc.book_checkout_book_checkout_id_seq TO loc_readwrite;
+GRANT ALL ON SEQUENCE loc.book_book_id_seq TO loc_readwrite;
+GRANT ALL ON SEQUENCE loc.author_author_id_seq TO loc_readwrite;
+GRANT ALL ON SEQUENCE loc.genre_genre_id_seq TO loc_readwrite;
+GRANT ALL ON SEQUENCE loc.book_author_xref_book_author_xref_id_seq TO loc_readwrite;
+GRANT ALL ON SEQUENCE loc.publisher_publisher_id_seq TO loc_readwrite;
+GRANT ALL ON SEQUENCE loc.user_user_id_seq TO loc_readwrite;

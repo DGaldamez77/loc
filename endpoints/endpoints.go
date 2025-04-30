@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/dgaldamez77/oloc/log"
+	"github.com/dgaldamez77/loc/log"
 	"github.com/go-chi/chi"
 )
 
@@ -14,7 +14,7 @@ var (
 
 func RegisterEndpoints() chi.Router {
 	registerEndpoing(http.MethodGet, "/books", getBooks)
-	registerEndpoing(http.MethodGet, "/book", getBook)
+	registerEndpoing(http.MethodGet, "/book/{bookID}", getBook)
 	registerEndpoing(http.MethodPost, "/book/checkout", postBookCheckout)
 	registerEndpoing(http.MethodPost, "/books/checkin", postBookCheckin)
 

@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/dgaldamez77/oloc/dal"
-	"github.com/dgaldamez77/oloc/dal/dto"
-	"github.com/dgaldamez77/oloc/log"
+	"github.com/dgaldamez77/loc/dal"
+	"github.com/dgaldamez77/loc/dal/dto"
+	"github.com/dgaldamez77/loc/log"
 )
 
 func getBooks(w http.ResponseWriter, r *http.Request) {

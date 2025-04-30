@@ -1,4 +1,4 @@
-module github.com/dgaldamez77/oloc
+module github.com/dgaldamez77/loc
 
 go 1.24.2
 

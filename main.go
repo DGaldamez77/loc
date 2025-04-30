@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/dgaldamez77/oloc/endpoints"
-	"github.com/dgaldamez77/oloc/log"
+	"github.com/dgaldamez77/loc/endpoints"
+	"github.com/dgaldamez77/loc/log"
 )
 
 func main() {

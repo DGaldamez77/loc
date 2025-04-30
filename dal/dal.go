@@ -3,23 +3,16 @@ package dal
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"os"
 	"reflect"
+	"sort"
 	"strings"
 	"time"
 
-	"github.com/dgaldamez77/oloc/dal/dto"
 	"github.com/lib/pq"
 )
-
-type IDAL interface {
-	query(string, ...interface{}) (*sql.Rows, error)
-	queryRow(string, ...interface{}) *sql.Row
-
-	GetBooks([]QueryParams) ([]dto.Book, error)
-	GetBooksUsingAuthor([]QueryParams) ([]dto.Book, error)
-}
 
 type DAL struct {
 	DB *sql.DB
@@ -58,6 +51,31 @@ type QueryParams struct {
 	StartGroup      bool
 	EndGroup        bool
 	BooleanOperator string
+}
+
+func (dal DAL) BeginTransaction() (out *sql.Tx, err error) {
+	tx, err := dal.DB.Begin()
+	if err != nil {
+		return nil, err
+	}
+
+	return tx, nil
+}
+
+func (dal DAL) Commit(tx *sql.Tx) error {
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (dal DAL) RollbackTransaction(tx *sql.Tx) error {
+	if err := tx.Rollback(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (dal DAL) buildWhere(params []QueryParams, extra ...interface{}) (where string, queryParams []interface{}) {
@@ -183,4 +201,55 @@ func (dal DAL) query(query string, args ...interface{}) (*sql.Rows, error) {
 	}
 
 	return dal.DB.Query(query, args...)
+}
+
+func (dal DAL) updateTable(tableName string, pks, data map[string]interface{}, out interface{}) (err error) {
+	values, stmt := dal.generateDynamicUpdateStatement(tableName, pks, data, false)
+
+	var j []byte
+	if err := dal.queryRow(stmt, values...).Scan(&j); err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(j, &out); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (dal DAL) generateDynamicUpdateStatement(table string, pks, data map[string]interface{}, retOriginal bool) (values []interface{}, stmt string) {
+	var sets []string
+	for key, element := range data {
+		sets = append(sets, fmt.Sprintf("%s = $%d", key, len(values)+1))
+		values = append(values, element)
+	}
+
+	var keys []string
+	for k := range pks {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	var where []string
+
+	for i := range keys {
+		k := keys[i]
+		where = append(where, fmt.Sprintf("t.%s = $%d", k, len(values)+1))
+		values = append(values, pks[k])
+	}
+
+	if retOriginal {
+		q := "UPDATE %s t SET %s FROM %s o WHERE %s AND %s RETURNING row_to_json(t), row_to_json(o)"
+		var wherePKs []string
+		for k := range pks {
+			wherePKs = append(wherePKs, fmt.Sprintf("t.%s = o.%s", k, k))
+		}
+		stmt = fmt.Sprintf(q, table, strings.Join(sets, ", "), table, strings.Join(wherePKs, " AND "), strings.Join(where, " AND "))
+	} else {
+		q := "UPDATE %s t SET %s WHERE %s RETURNING row_to_json(t)"
+		stmt = fmt.Sprintf(q, table, strings.Join(sets, ", "), strings.Join(where, " AND "))
+	}
+
+	return values, stmt
 }
