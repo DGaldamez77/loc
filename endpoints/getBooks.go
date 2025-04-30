@@ -27,6 +27,7 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
+	// only add fields to query if they exist in query string
 	if title != "" {
 		q = append(q, dal.QueryParams{
 			FieldName:  "lower(b.title)",

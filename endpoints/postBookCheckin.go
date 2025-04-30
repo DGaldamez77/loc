@@ -45,6 +45,7 @@ func postBookCheckin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// find the book checkout that has not been returned
 	for i := range bookCheckouts {
 		bco := bookCheckouts[i]
 		if bco.Returned == nil {
@@ -55,6 +56,7 @@ func postBookCheckin(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
+	// no checkout found... respond with error
 	if checkedout == nil {
 		w.WriteHeader(http.StatusBadRequest)
 		_, err = w.Write([]byte("book is not checked out to this user"))
@@ -71,6 +73,7 @@ func postBookCheckin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Update book checkout table to create the association between book and user
 	var outCheckout *dto.BookCheckout
 	changes := map[string]interface{}{
 		"returned":   time.Now().UTC(),
@@ -96,7 +99,7 @@ func postBookCheckin(w http.ResponseWriter, r *http.Request) {
 	bookInventory, err := db.GetBookInventory(q)
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
-			http.Error(w, err.Error(), http.StatusNotFound)
+			http.Error(w, "no book availability found in book inventory", http.StatusNotFound)
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}

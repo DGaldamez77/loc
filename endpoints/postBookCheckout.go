@@ -37,11 +37,13 @@ func postBookCheckout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// return error if there are not books to checkout
 	if bookInventory.BookCount <= 0 {
 		http.Error(w, "book is not available in inventory", http.StatusInternalServerError)
 		return
 	}
 
+	// get book checkouts
 	q = []dal.QueryParams{
 		{
 			FieldName: "bco.book_id",
@@ -66,6 +68,7 @@ func postBookCheckout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// find book that was checked out
 	for i := range bookCheckouts {
 		bco := bookCheckouts[i]
 		if bco.Returned == nil {
@@ -76,13 +79,9 @@ func postBookCheckout(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
+	// book is not chekced out... return error
 	if checkedout != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, err = w.Write([]byte("book is already checked out to this user"))
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		http.Error(w, "book is already checked out to this user", http.StatusBadRequest)
 		return
 	}
 
@@ -92,6 +91,7 @@ func postBookCheckout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Add book/user to book checkout table
 	var outCheckout *dto.BookCheckout
 	newCheckout := dto.BookCheckout{
 		BookID:    bookCheckout.BookID,
