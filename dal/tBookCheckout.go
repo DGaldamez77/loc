@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/dgaldamez77/loc/dal/dto"
+	"github.com/dgaldamez77/loc/log"
 	"github.com/dgaldamez77/loc/util"
 	"github.com/joomcode/errorx"
 )
@@ -26,7 +27,11 @@ func (dal DAL) GetBookCheckouts(params []QueryParams) (out []dto.BookCheckout, e
 	if rows, err = dal.query(stmt, qParams...); err != nil {
 		return nil, errorx.EnsureStackTrace(err)
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.LogError(err, "failed to close rows")
+		}
+	}()
 
 	for rows.Next() {
 		var bco dto.BookCheckout

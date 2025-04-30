@@ -15,7 +15,13 @@ func main() {
 
 	port := "8080"
 	log.LogInfo("Service listening on port " + port)
-	http.ListenAndServe(":"+port, router)
+
+	// for a real implementation, this needs to be changed to a serve function
+	// that suports time out
+	//nolint
+	if err := http.ListenAndServe(":"+port, router); err != nil {
+		log.LogError(err, "failed to start server")
+	}
 }
 
 func validateEnvironment() {
