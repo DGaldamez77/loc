@@ -58,3 +58,26 @@ curl --location 'http://localhost:8080/book/checkout' \
 }'
 ```
 
+### Checkin a Book 
+POST /book/checkout
+
+Method: POST
+Query Parameters: None
+URL Parameters: None
+Body:
+    {
+        bookID string
+        userID string
+    }
+
+##### Sample Query:
+
+```
+curl --location 'http://localhost:8080/book/checkin' \
+--header 'Content-Type: application/json' \
+--data '{
+    "book_id": 5,
+    "user_id": 2,
+    "created_by": "david"
+}'
+```

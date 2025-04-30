@@ -82,6 +82,7 @@ func postBookCheckin(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
+		db.RollbackTransaction(tx)
 		return
 	}
 
@@ -99,6 +100,8 @@ func postBookCheckin(w http.ResponseWriter, r *http.Request) {
 		} else {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
+
+		db.RollbackTransaction(tx)
 		return
 	}
 
@@ -109,12 +112,14 @@ func postBookCheckin(w http.ResponseWriter, r *http.Request) {
 	}
 	if _, err = db.UpdateBookInventory(bookInventory.BookID, changes); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+
 		db.RollbackTransaction(tx)
 		return
 	}
 
 	if err = db.Commit(tx); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+
 		db.RollbackTransaction(tx)
 		return
 	}
